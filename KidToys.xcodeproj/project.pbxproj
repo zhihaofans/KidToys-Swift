@@ -6,6 +6,10 @@
 	objectVersion = 110;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		26D32446307E855100821597 /* SwiftUtils in Frameworks */ = {isa = PBXBuildFile; productRef = 26D32445307E855100821597 /* SwiftUtils */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		26D32436307E84E300821597 /* KidToys Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "KidToys Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -22,6 +26,7 @@
 		26D32433307E84E300821597 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
+				26D32446307E855100821597 /* SwiftUtils in Frameworks */,
 			);
 		};
 /* End PBXFrameworksBuildPhase section */
@@ -60,6 +65,9 @@
 				26D32438307E84E300821597 /* KidToys Watch App */,
 			);
 			name = "KidToys Watch App";
+			packageProductDependencies = (
+				26D32445307E855100821597 /* SwiftUtils */,
+			);
 			productName = "KidToys Watch App";
 			productReference = 26D32436307E84E300821597 /* KidToys Watch App.app */;
 			productType = "com.apple.product-type.application";
@@ -88,6 +96,9 @@
 			);
 			mainGroup = 26D3242D307E84E300821597;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				26D32444307E855100821597 /* XCRemoteSwiftPackageReference "SwiftUtils" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 26D32437307E84E300821597 /* Products */;
 			projectDirPath = "";
@@ -318,6 +329,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		26D32444307E855100821597 /* XCRemoteSwiftPackageReference "SwiftUtils" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/zhihaofans/SwiftUtils";
+			requirement = {
+				kind = exactVersion;
+				version = 0.0.22;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		26D32445307E855100821597 /* SwiftUtils */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 26D32444307E855100821597 /* XCRemoteSwiftPackageReference "SwiftUtils" */;
+			productName = SwiftUtils;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 26D3242E307E84E300821597 /* Project object */;
 	validationLevel = 1;
