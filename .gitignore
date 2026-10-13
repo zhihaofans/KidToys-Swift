@@ -22,6 +22,5 @@ DerivedData/
 .swiftpm/configuration
 .swiftpm/xcode/package.xcworkspace/xcuserdata/
 
-# 本仓库的本地验证用临时目录
-.dsh-home/
-.dsh-build/
+# 本地验证用临时文件（截图等），不入库
+.tmp/
