@@ -1,0 +1,27 @@
+# macOS
+.DS_Store
+
+# Xcode — 用户级状态（每个开发者不同，不入库）
+xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+*.xccheckout
+
+# Xcode — 构建产物
+build/
+DerivedData/
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM
+*.dSYM.zip
+
+# Swift Package Manager
+# 注意：Package.resolved 要入库，保证依赖版本一致
+.build/
+.swiftpm/configuration
+.swiftpm/xcode/package.xcworkspace/xcuserdata/
+
+# 本仓库的本地验证用临时目录
+.dsh-home/
+.dsh-build/
