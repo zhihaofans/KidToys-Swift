@@ -15,6 +15,7 @@ import SwiftUI
 
 enum ToyFeature: String, CaseIterable, Identifiable {
     case randomNumber
+    case randomColor
 
     var id: String { rawValue }
 
@@ -22,6 +23,7 @@ enum ToyFeature: String, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .randomNumber: return "随机数字"
+        case .randomColor: return "随机颜色"
         }
     }
 
@@ -29,6 +31,7 @@ enum ToyFeature: String, CaseIterable, Identifiable {
     var symbol: String {
         switch self {
         case .randomNumber: return "die.face.6.fill"
+        case .randomColor: return "paintpalette.fill"
         }
     }
 
@@ -36,6 +39,7 @@ enum ToyFeature: String, CaseIterable, Identifiable {
     var tint: Color {
         switch self {
         case .randomNumber: return .orange
+        case .randomColor: return .purple
         }
     }
 }

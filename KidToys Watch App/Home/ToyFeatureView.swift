@@ -15,6 +15,8 @@ struct ToyFeatureView: View {
         switch feature {
         case .randomNumber:
             RandomNumberView()
+        case .randomColor:
+            RandomColorView()
         }
     }
 }
