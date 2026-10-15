@@ -14,8 +14,9 @@ struct ToyButton: View {
 
     var body: some View {
         VStack(spacing: 4) {
-            Image(systemName: feature.symbol)
-                .font(.system(size: 34, weight: .bold))
+            iconView
+                // 文字图标和 SF Symbol 的行高不一样，统一给个高度让各按钮的标签对齐
+                .frame(height: 38)
 
             Text(feature.title)
                 .font(.system(size: 13, weight: .semibold))
@@ -28,6 +29,18 @@ struct ToyButton: View {
         .background(shape.fill(feature.tint.gradient))
         // 小朋友容易点偏，把整块矩形都算作命中区域
         .contentShape(shape)
+    }
+
+    @ViewBuilder
+    private var iconView: some View {
+        switch feature.icon {
+        case .symbol(let name):
+            Image(systemName: name)
+                .font(.system(size: 34, weight: .bold))
+        case .text(let value):
+            Text(value)
+                .font(.system(size: 34, weight: .heavy, design: .rounded))
+        }
     }
 }
 

@@ -19,6 +19,8 @@ struct ToyFeatureView: View {
             RandomColorView()
         case .mathQuiz:
             MathQuizView()
+        case .randomLetter:
+            RandomLetterView()
         }
     }
 }
