@@ -31,7 +31,7 @@ struct MathQuestion {
     let answer: Int
 
     var expression: String {
-        "\(a) \(op.symbol) \(b) = ?"
+        "\(a) \(op.symbol) \(b) = "
     }
 
     /// 随机生成。减法保证 a ≥ b，结果不为负 —— 3 岁小孩不该遇到负数
