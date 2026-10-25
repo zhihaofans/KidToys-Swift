@@ -35,3 +35,42 @@ xcodebuild -project KidToys.xcodeproj -scheme "KidToys Watch App" -configuration
 
 - `.tmp/` 是 gitignored 的临时区：截图、derivedData 都放这里，不要提交。
 - 验证走「构建 → `simctl install/launch` → `simctl io screenshot` → 看图」，不要靠读代码判断布局。
+
+## 真机调试
+
+**默认推给小天才电话手表 Ultra 3**（Apple Watch Ultra 3 / Watch7,12，watchOS 27.2）。
+用户说「推真机」就是推这台，不用再问。
+
+设备 UDID 不写进仓库 —— 那是设备的唯一标识，仓库是公开的。每次现场取：
+
+```bash
+# 按名字找当前连上的那台，取它的 UDID；输出为空说明手表没连上
+UDID=$(xcrun devicectl list devices | grep '小天才' |
+       sed -nE 's/.* ([0-9A-F]{8}-[0-9A-F]{16}) \(UDID\).*/\1/p' | head -1)
+echo "$UDID"
+```
+
+然后构建 / 安装 / 启动都引用 `"$UDID"`：
+
+```bash
+xcodebuild -project KidToys.xcodeproj -scheme "KidToys Watch App" -configuration Debug \
+  -destination "platform=watchOS,id=$UDID" \
+  -destination-timeout 300 -allowProvisioningUpdates \
+  -derivedDataPath .tmp/ddb-device build
+
+xcrun devicectl device install app --device "$UDID" \
+  ".tmp/ddb-device/Build/Products/Debug-watchos/KidToys Watch App.app"
+
+xcrun devicectl device process launch --device "$UDID" \
+  me.zzhhoo.KidToys.watchkitapp
+```
+
+踩过的坑：
+
+- 家里另一台 Apple Watch（Watch7,1 / watchOS 26.6）经常不在局域网里，
+  `devicectl` 显示 `disconnected`、构建会卡在 destination 超时。
+  推它之前先 `xcrun devicectl list devices` 看是不是 `connected`。
+- 装完马上 `process launch` 可能报
+  `Navigation away from clock is not allowed due to one or more active system states`，
+  这不是签名问题 —— 手表点亮屏幕后重试一次就成。
+- 这三条命令都需要完整磁盘权限，sandbox 下跑不了。
