@@ -1,5 +1,5 @@
 {
-  "originHash" : "126333d246af66554a405c7a6af8dbd8704b1d6ddbcf99a8643e76ec79a02457",
+  "originHash" : "e6ba6566d7000e5f9bb6710cf34c3358fa681f3f2655f8e33673bf1d52d496f4",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "bda9ed57d72988a3a2ada33d824583541f86eac6",
         "version" : "5.12.2"
+      }
+    },
+    {
+      "identity" : "crashkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/zhihaofans/CrashKit.git",
+      "state" : {
+        "revision" : "58877945489209c9cb625519876055f0ff355acd",
+        "version" : "0.1.2"
       }
     },
     {

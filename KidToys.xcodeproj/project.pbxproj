@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		26D32446307E855100821597 /* SwiftUtils in Frameworks */ = {isa = PBXBuildFile; productRef = 26D32445307E855100821597 /* SwiftUtils */; };
+		26D32452307E855100821597 /* CrashKit in Frameworks */ = {isa = PBXBuildFile; productRef = 26D32451307E855100821597 /* CrashKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +28,7 @@
 			isa = PBXFrameworksBuildPhase;
 			files = (
 				26D32446307E855100821597 /* SwiftUtils in Frameworks */,
+				26D32452307E855100821597 /* CrashKit in Frameworks */,
 			);
 		};
 /* End PBXFrameworksBuildPhase section */
@@ -67,6 +69,7 @@
 			name = "KidToys Watch App";
 			packageProductDependencies = (
 				26D32445307E855100821597 /* SwiftUtils */,
+				26D32451307E855100821597 /* CrashKit */,
 			);
 			productName = "KidToys Watch App";
 			productReference = 26D32436307E84E300821597 /* KidToys Watch App.app */;
@@ -98,6 +101,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				26D32444307E855100821597 /* XCRemoteSwiftPackageReference "SwiftUtils" */,
+				26D32450307E855100821597 /* XCRemoteSwiftPackageReference "CrashKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 26D32437307E84E300821597 /* Products */;
@@ -248,7 +252,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = 9DU6DRLH3R;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -259,7 +263,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.0.2;
+				MARKETING_VERSION = 0.0.3;
 				PRODUCT_BUNDLE_IDENTIFIER = me.zzhhoo.KidToys.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -281,7 +285,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = 9DU6DRLH3R;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -292,7 +296,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.0.2;
+				MARKETING_VERSION = 0.0.3;
 				PRODUCT_BUNDLE_IDENTIFIER = me.zzhhoo.KidToys.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -331,6 +335,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		26D32450307E855100821597 /* XCRemoteSwiftPackageReference "CrashKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/zhihaofans/CrashKit.git";
+			requirement = {
+				kind = exactVersion;
+				version = 0.1.2;
+			};
+		};
 		26D32444307E855100821597 /* XCRemoteSwiftPackageReference "SwiftUtils" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/zhihaofans/SwiftUtils";
@@ -342,6 +354,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		26D32451307E855100821597 /* CrashKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 26D32450307E855100821597 /* XCRemoteSwiftPackageReference "CrashKit" */;
+			productName = CrashKit;
+		};
 		26D32445307E855100821597 /* SwiftUtils */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 26D32444307E855100821597 /* XCRemoteSwiftPackageReference "SwiftUtils" */;

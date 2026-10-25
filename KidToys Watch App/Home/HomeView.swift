@@ -7,8 +7,12 @@
 //
 
 import SwiftUI
+import CrashKit
 
 struct HomeView: View {
+    @State private var crashReport: CrashReport?
+    @State private var showCrashAlert = false
+
     /// 只有一个玩具时铺满整行（对孩子来说更好点），两个以上排成两列
     private var columns: [GridItem] {
         let count = ToyFeature.allCases.count <= 1 ? 1 : 2
@@ -40,6 +44,20 @@ struct HomeView: View {
             .navigationDestination(for: ToyFeature.self) { feature in
                 ToyFeatureView(feature: feature)
             }
+        }
+        .task {
+            guard crashReport == nil else { return }
+            if let report = CrashRecorder.shared.takePendingReport() {
+                crashReport = report
+                showCrashAlert = true
+            }
+        }
+        .alert(crashReport?.title ?? "上次闪退了", isPresented: $showCrashAlert) {
+            Button("知道了", role: .cancel) {
+                crashReport = nil
+            }
+        } message: {
+            Text(crashReport?.details ?? "")
         }
     }
 }
