@@ -11,15 +11,24 @@
 import SwiftUI
 
 struct MathQuizPlayView: View {
-    // 家长在左滑那页改的开关，这里跟着变
-    @AppStorage(MathQuizSettings.plusKey) private var allowPlus = MathQuizSettings.plusDefault
-    @AppStorage(MathQuizSettings.minusKey) private var allowMinus = MathQuizSettings.minusDefault
+    // 家长在左滑那页选的题型，这里跟着变。
+    // 默认值用折算结果：老数据只有两个开关时，也能选对出题类型
+    @AppStorage(MathQuizSettings.modeKey)
+    private var modeRaw = MathQuizSettings.currentMode().rawValue
+
+    private var mode: MathQuizMode {
+        MathQuizMode(rawValue: modeRaw) ?? MathQuizSettings.defaultMode
+    }
+    private var allowPlus: Bool { mode.allowPlus }
+    private var allowMinus: Bool { mode.allowMinus }
 
     @State private var question: MathQuestion
     @State private var options: [Int]
     @State private var feedback: FeedbackKind?
     @State private var correctTick = 0
     @State private var wrongTick = 0
+    /// 这道题已经点错过的答案（去重）。点满 options.count - 1 个就换题。
+    @State private var eliminated: Set<Int> = []
 
     enum FeedbackKind {
         case correct
@@ -27,9 +36,9 @@ struct MathQuizPlayView: View {
     }
 
     init() {
-        // init 里读不到 @AppStorage，直接读 UserDefaults
-        let settings = MathQuizSettings.load()
-        let q = MathQuestion.random(allowPlus: settings.plus, allowMinus: settings.minus)
+        // init 里读不到 @AppStorage，直接读 UserDefaults 取当前题型来出第一道题
+        let mode = MathQuizSettings.currentMode()
+        let q = MathQuestion.random(allowPlus: mode.allowPlus, allowMinus: mode.allowMinus)
         _question = State(initialValue: q)
         _options = State(initialValue: q.options())
     }
@@ -51,9 +60,8 @@ struct MathQuizPlayView: View {
         .animation(.easeInOut(duration: 0.18), value: feedback)
         .sensoryFeedback(.success, trigger: correctTick)
         .sensoryFeedback(.error, trigger: wrongTick)
-        // 把某一类关掉之后，正显示着的那道题如果正好是这一类，就换掉
-        .onChange(of: allowPlus) { _, _ in dropQuestionIfDisallowed() }
-        .onChange(of: allowMinus) { _, _ in dropQuestionIfDisallowed() }
+        // 题型被家长改掉之后，正显示着的那道题如果不合规就换掉
+        .onChange(of: modeRaw) { _, _ in dropQuestionIfDisallowed() }
     }
 
     // MARK: - 题目 + 选项
@@ -119,11 +127,23 @@ struct MathQuizPlayView: View {
                 try? await Task.sleep(for: .seconds(1.1))
                 nextQuestion()
             }
-        } else {
-            feedback = .wrong
-            wrongTick += 1
-            Task {
-                try? await Task.sleep(for: .seconds(0.9))
+            return
+        }
+
+        feedback = .wrong
+        wrongTick += 1
+        eliminated.insert(value)
+
+        // 错到只剩正确答案没试过，就直接换下一题：
+        // 3 个答案最多错 2 次，答案数变了这里自然跟着变（N 个答案能错 N-1 次）。
+        // 不这么做的话，孩子可以一个个点过去，最后一下必然是对的。
+        let outOfTries = eliminated.count >= options.count - 1
+
+        Task {
+            try? await Task.sleep(for: .seconds(0.9))
+            if outOfTries {
+                nextQuestion()
+            } else {
                 // 只关掉红叉，回到同一题继续选
                 feedback = nil
             }
@@ -133,6 +153,7 @@ struct MathQuizPlayView: View {
     private func nextQuestion() {
         question = .random(allowPlus: allowPlus, allowMinus: allowMinus)
         options = question.options()
+        eliminated.removeAll()
         feedback = nil
     }
 

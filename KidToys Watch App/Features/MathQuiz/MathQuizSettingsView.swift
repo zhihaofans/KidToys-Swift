@@ -2,17 +2,24 @@
 //  MathQuizSettingsView.swift
 //  KidToys Watch App
 //
-//  家长设置页（加减法页左滑过来）：打开/关闭加法、减法。
+//  家长设置页（加减法页左滑过来）：从左到右一根滑块选题型。
 //
-//  两个都关掉就没有题可出了，所以剩下最后一个时会把它锁住不让关。
+//  左边「加法」= 只出加法，中间「都出」= 加减都出，右边「减法」= 只出减法。
+//  点一下能选，横着滑也能选 —— 滑块自己会滑过去。
 //  配色沿用随机数字设置页那种安静的深色，跟小孩玩的那页区分开。
 //
 
 import SwiftUI
 
 struct MathQuizSettingsView: View {
-    @AppStorage(MathQuizSettings.plusKey) private var allowPlus = MathQuizSettings.plusDefault
-    @AppStorage(MathQuizSettings.minusKey) private var allowMinus = MathQuizSettings.minusDefault
+    // 默认值用折算结果，老数据（两个开关）没有新键时滑块也能停在对的位置
+    @AppStorage(MathQuizSettings.modeKey)
+    private var modeRaw = MathQuizSettings.currentMode().rawValue
+    @Namespace private var pill
+
+    private var mode: MathQuizMode {
+        MathQuizMode(rawValue: modeRaw) ?? MathQuizSettings.defaultMode
+    }
 
     var body: some View {
         ZStack {
@@ -20,75 +27,78 @@ struct MathQuizSettingsView: View {
                            startPoint: .top, endPoint: .bottom)
                 .ignoresSafeArea()
 
-            VStack(spacing: 8) {
+            VStack(spacing: 10) {
                 Text("出题类型")
                     .font(.system(size: 14, weight: .bold, design: .rounded))
                     .foregroundStyle(.secondary)
-                    .padding(.bottom, 2)
 
-                toggleRow("加法",
-                          symbol: "plus",
-                          isOn: $allowPlus,
-                          tint: .orange,
-                          locked: allowPlus && !allowMinus)
+                picker
 
-                toggleRow("减法",
-                          symbol: "minus",
-                          isOn: $allowMinus,
-                          tint: .teal,
-                          locked: allowMinus && !allowPlus)
-
-                // 只在锁住时出现，告诉家长为什么这个开关点不动
-                if allowPlus != allowMinus {
-                    Text("至少留一种")
-                        .font(.system(size: 12, weight: .medium, design: .rounded))
-                        .foregroundStyle(.tertiary)
-                        .transition(.opacity)
-                }
+                Text(mode.caption)
+                    .font(.system(size: 12, weight: .medium, design: .rounded))
+                    .foregroundStyle(.tertiary)
+                    .contentTransition(.opacity)
             }
             .foregroundStyle(.white)
-            .animation(.easeInOut(duration: 0.15), value: allowPlus == allowMinus)
-        }
-        // 兜底：万一两个都被关掉，把刚关的那个弹回来，不让出现「没题可出」的状态
-        .onChange(of: allowPlus) { _, newValue in
-            if !newValue && !allowMinus { allowPlus = true }
-        }
-        .onChange(of: allowMinus) { _, newValue in
-            if !newValue && !allowPlus { allowMinus = true }
+            .padding(.horizontal, 8)
         }
     }
 
-    private func toggleRow(_ title: String,
-                           symbol: String,
-                           isOn: Binding<Bool>,
-                           tint: Color,
-                           locked: Bool) -> some View {
-        let on = isOn.wrappedValue
+    // MARK: - 三档滑块
 
-        return HStack(spacing: 8) {
-            Image(systemName: symbol)
-                .font(.system(size: 14, weight: .black))
-                .foregroundStyle(on ? tint : Color.secondary)
-                .frame(width: 16)
-
-            Text(title)
-                .font(.system(size: 16, weight: .semibold, design: .rounded))
-
-            Spacer(minLength: 2)
-
-            Toggle(title, isOn: isOn)
-                .labelsHidden()
-                .tint(tint)
+    private var picker: some View {
+        HStack(spacing: 0) {
+            ForEach(MathQuizMode.allCases) { item in
+                Button {
+                    select(item)
+                } label: {
+                    Text(item.title)
+                        .font(.system(size: 13, weight: .bold, design: .rounded))
+                        .foregroundStyle(mode == item ? Color.white : Color.secondary)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background {
+                            // 滑块的底：选中哪档就挪到哪档，靠 matchedGeometryEffect 滑过去
+                            if mode == item {
+                                RoundedRectangle(cornerRadius: 13, style: .continuous)
+                                    .fill(item.tint.gradient)
+                                    .matchedGeometryEffect(id: "pill", in: pill)
+                            }
+                        }
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+            }
         }
-        .padding(.horizontal, 10)
-        .frame(height: 46)
+        .frame(height: 42)
+        .padding(3)
         .background(
-            RoundedRectangle(cornerRadius: 15, style: .continuous)
-                .fill(.white.opacity(on ? 0.15 : 0.06))
+            Capsule(style: .continuous)
+                .fill(.white.opacity(0.10))
         )
-        // 只剩这一种题型时锁住开关，两个都关就没题可出了
-        .opacity(locked ? 0.55 : 1)
-        .disabled(locked)
+        .animation(.spring(response: 0.3, dampingFraction: 0.82), value: modeRaw)
+        // 点还是点，滑是加在旁边的：手指横着划就把滑块挪一档，到头就不动
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 15)
+                .onEnded { value in
+                    guard abs(value.translation.width) > 15 else { return }
+                    select(mode.stepped(by: value.translation.width > 0 ? 1 : -1))
+                }
+        )
+    }
+
+    private func select(_ newMode: MathQuizMode) {
+        guard newMode != mode else { return }
+        modeRaw = newMode.rawValue
+    }
+}
+
+private extension MathQuizMode {
+    var tint: Color {
+        switch self {
+        case .plusOnly: return .orange
+        case .both: return .purple
+        case .minusOnly: return .teal
+        }
     }
 }
 
